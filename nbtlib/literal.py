@@ -21,7 +21,7 @@ from .tag import *
 
 TOKENS = {
     'QUOTED_STRING': r'""|".*?[^\\]"',
-    'NUMBER': r'-?(?:[0-9]*?\.[0-9]+|[0-9]+\.[0-9]*?|[0-9]+)[bslLfd]?',
+    'NUMBER': r'-?(?:[0-9]*?\.[0-9]+|[0-9]+\.[0-9]*?|[0-9]+)[bslfdBSLFD]?',
     'STRING': r'[a-zA-Z0-9._+-]+',
     'COMPOUND': r'\{',
     'CLOSE_COMPOUND': r'\}',
@@ -44,7 +44,7 @@ TOKENS_REGEX = re.compile(
 
 # Associate number suffixes to tag types
 
-NUMBER_SUFFIXES = {'b': Byte, 's': Short, 'l': Long, 'L': Long, 'f': Float, 'd': Double}
+NUMBER_SUFFIXES = {'b': Byte, 's': Short, 'l': Long, 'f': Float, 'd': Double}
 
 
 def parse_nbt(literal):
@@ -124,7 +124,7 @@ class NbtParser:
     def parse_number(self):
         """Parse a number from the token stream."""
         value = self.current_token.value
-        suffix = value[-1]
+        suffix = value[-1].lower()
         if suffix in NUMBER_SUFFIXES:
             return NUMBER_SUFFIXES[suffix](value[:-1])
         else:
