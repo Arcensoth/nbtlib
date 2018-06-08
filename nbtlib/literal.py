@@ -31,6 +31,7 @@ TOKENS = {
     'CLOSE_BRACKET': r'\]',
     'COLON': r':',
     'COMMA': r',',
+    'WHITESPACE': r'\s',
     'INVALID': r'.+?',
 }
 
@@ -102,10 +103,13 @@ class NbtParser:
         return InvalidLiteral(self.token_span, message)
 
     def next(self):
-        """Move to the next token in the token stream."""
-        self.current_token = next(self.token_stream, None)
-        if self.current_token is None:
-            raise self.error('Unexpected end of input')
+        """Move to the next token in the token stream. Skip whitespace as if it didn't exist."""
+        while True:
+            self.current_token = next(self.token_stream, None)
+            if self.current_token is None:
+                raise self.error('Unexpected end of input')
+            elif self.current_token.type != 'WHITESPACE':
+                break
         self.token_span = self.current_token.span
         return self
 
